@@ -1,3 +1,20 @@
+var Todo = React.createClass({displayName: "Todo",
+  todoDisplay: function(){
+    return (
+      React.createElement("li", {className: "todo"}, 
+        React.createElement("span", null, 
+          this.props.children
+        )
+      )
+    );
+  },
+
+  render: function(){
+    return this.todoDisplay();
+  }
+  //ends todo
+});
+
 var Excersice = React.createClass({displayName: "Excersice",
 
   getInitialState: function(){
@@ -13,21 +30,6 @@ var Excersice = React.createClass({displayName: "Excersice",
     };
   },
 
-  onChange: function(e) {
-    this.setState({text: e.target.value})
-  },
-
-  getArray: function(data) {
-    for (item in data) {
-      if(Array.isArray(data[item])){
-        this.getArray(data[item]);
-      }else{
-        this.state.convertedArray.push(data[item]);
-        console.log(data[item]);
-      }
-    }
-  },
-
   convert: function(e) {
     var arr= this.state.convertedArray;
     var newtoConvert= this.refs.nestedArray.getDOMNode().value;
@@ -35,22 +37,13 @@ var Excersice = React.createClass({displayName: "Excersice",
       e.preventDefault();
       this.setState({placeholder:"Please add a nested array", input_style:"form-control red"});
     }else{
-      this.state.convertedArray = [];
-      try{
-        var newData = JSON.parse("[" + newtoConvert + "]");
-      }
-      catch (err){
-        this.setState({placeholder:"Please check syntax", input_style:"form-control red"});
-        return err;
-      }
-
-      this.getArray(newData);
-      this.setState({text: null, input_style:"form-control", placeholder:"Add nested array"});
+      arr.push(newtoConvert);
+      this.setState({todos: arr, text: null, input_style:"form-control", placeholder:"Add nested array"});
     }
   },
 
   eachNumber: function(number, i) {
-    return (React.createElement("li", {className: "todo"}, 
+    return (React.createElement(Number, {key: i, index: i}, 
       number
     ));
   },
@@ -58,14 +51,12 @@ var Excersice = React.createClass({displayName: "Excersice",
   render: function(){
       return (
         React.createElement("div", null, 
-          React.createElement("div", {className: "text-center"}, 
-          React.createElement("h1", null, "Insert nested arrays(js convention)"), 
-          React.createElement("h2", null, "i.e. [[1,2,[3]],4]")
-          ), 
+
+          React.createElement("h1", null, "Insert nested arrays (js convention)"), 
           React.createElement("div", {className: "form-inline"}, 
 
             React.createElement("div", {className: "form-group"}, 
-              React.createElement("input", {ref: "nestedArray", className: this.state.input_style, placeholder: this.state.placeholder, value: this.state.text, onChange: this.onChange}), 
+              React.createElement("input", {ref: "nestedArray", className: this.state.input_style, placeholder: this.state.placeholder, value: this.state.text}), 
               React.createElement("button", {onClick: this.convert, className: "btn btn-default btn-sm"}, "Convert")
             )
           ), 

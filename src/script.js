@@ -1,67 +1,14 @@
-var Todo = React.createClass({
-  getInitialState: function(){
-    return {editing:false};
-  },
-
-  edit: function(){
-    this.setState({editing:true});
-  },
-
-  remove: function(){
-    this.props.onRemove(this.props.index);
-  },
-
-  save: function(){
-    var val = this.refs.newValue.getDOMNode().value;
-    this.props.onChange(val, this.props.index);
-    this.setState({editing:false});
-  },
-
-  todoDisplay: function(){
-    return (
-      <li className="todo">
-        <span onClick={this.edit}>
-          {this.props.children}
-        </span>
-        <button onClick={this.remove} className="btn btn-default btn-sm glyphicon glyphicon-trash pull-right">
-        </button>
-      </li>
-    );
-  },
-
-  todoForm: function () {
-    return (
-      <li className="todo">
-        <span onClick={this.edit}>
-          <input type="text" placeholder="Edit todo" ref="newValue" defaultValue={this.props.children} />
-        </span>
-        <button onClick={this.save} className="btn btn-default btn-sm glyphicon glyphicon-floppy-disk pull-right">
-        </button>
-      </li>
-    );
-  },
-
-  render: function(){
-    if(this.state.editing){
-      return this.todoForm();
-    }else{
-      return this.todoDisplay();
-    }
-  }
-  //ends todo
-});
-
-var TodoList = React.createClass({
+var Excersice = React.createClass({
 
   getInitialState: function(){
     return {
-      todos: [
-        'Call Henry',
-        'Pay phone bill',
-        'Make medical appointment'
+      convertedArray: [
+        1,
+        2,
+        3
       ],
       text: '',
-      placeholder: "Add Todo",
+      placeholder: "Add nested array",
       input_style: "form-control"
     };
   },
@@ -70,54 +17,64 @@ var TodoList = React.createClass({
     this.setState({text: e.target.value})
   },
 
-  add: function(e) {
-    var arr= this.state.todos;
-    var newTodo= this.refs.newTodo.getDOMNode().value;
-    if(!newTodo){
-      e.preventDefault();
-      this.setState({placeholder:"Please Add Todo", input_style:"form-control red"});
-    }else{
-      arr.push(newTodo);
-      this.setState({todos: arr, text: null, input_style:"form-control", placeholder:"Add Todo"});
+  getArray: function(data) {
+    for (item in data) {
+      if(Array.isArray(data[item])){
+        this.getArray(data[item]);
+      }else{
+        this.state.convertedArray.push(data[item]);
+        console.log(data[item]);
+      }
     }
   },
 
-  update: function(newValue, i) {
-    var arr = this.state.todos;
-    arr[i] = newValue;
-    this.setState({todos: arr});
+  convert: function(e) {
+    var arr= this.state.convertedArray;
+    var newtoConvert= this.refs.nestedArray.getDOMNode().value;
+    if(!newtoConvert){
+      e.preventDefault();
+      this.setState({placeholder:"Please add a nested array", input_style:"form-control red"});
+    }else{
+      this.state.convertedArray = [];
+      try{
+        var newData = JSON.parse("[" + newtoConvert + "]");
+      }
+      catch (err){
+        this.setState({placeholder:"Please check syntax", input_style:"form-control red"});
+        return err;
+      }
+
+      this.getArray(newData);
+      this.setState({text: null, input_style:"form-control", placeholder:"Add nested array"});
+    }
   },
 
-  remove: function(i) {
-    var arr= this.state.todos;
-    arr.splice(i, 1);
-    this.setState({todos: arr});
-  },
-
-  eachTodo: function(todo, i) {
-    return (<Todo key={i} index={i} onChange={this.update} onRemove={this.remove}>
-      {todo}
-    </Todo>);
+  eachNumber: function(number, i) {
+    return (<li className="todo">
+      {number}
+    </li>);
   },
 
   render: function(){
       return (
         <div>
-
-          <h1>Things to DO</h1>
+          <div className="text-center">
+          <h1>Insert nested arrays(js convention)</h1>
+          <h2>i.e. [[1,2,[3]],4]</h2>
+          </div>
           <div className="form-inline">
 
             <div className="form-group">
-              <input ref="newTodo" className={this.state.input_style} placeholder={this.state.placeholder} value={this.state.text} onChange={this.onChange} />
-              <button onClick={this.add} className="btn btn-default btn-sm">+</button>
+              <input ref="nestedArray" className={this.state.input_style} placeholder={this.state.placeholder} value={this.state.text} onChange={this.onChange} />
+              <button onClick={this.convert} className="btn btn-default btn-sm">Convert</button>
             </div>
           </div>
           <ul>
-            {this.state.todos.map(this.eachTodo)}
+            {this.state.convertedArray.map(this.eachNumber)}
           </ul>
         </div>
       );
   }
 });
 
-React.render(<TodoList />, document.getElementById('todo'));
+React.render(<Excersice />, document.getElementById('excersice'));

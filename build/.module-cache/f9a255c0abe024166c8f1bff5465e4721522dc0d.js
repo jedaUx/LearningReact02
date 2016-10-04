@@ -17,35 +17,15 @@ var Excersice = React.createClass({displayName: "Excersice",
     this.setState({text: e.target.value})
   },
 
-  getArray: function(data) {
-    for (item in data) {
-      if(Array.isArray(data[item])){
-        this.getArray(data[item]);
-      }else{
-        this.state.convertedArray.push(data[item]);
-        console.log(data[item]);
-      }
-    }
-  },
-
   convert: function(e) {
     var arr= this.state.convertedArray;
     var newtoConvert= this.refs.nestedArray.getDOMNode().value;
     if(!newtoConvert){
-      e.preventDefault();
+      // e.preventDefault();
       this.setState({placeholder:"Please add a nested array", input_style:"form-control red"});
     }else{
-      this.state.convertedArray = [];
-      try{
-        var newData = JSON.parse("[" + newtoConvert + "]");
-      }
-      catch (err){
-        this.setState({placeholder:"Please check syntax", input_style:"form-control red"});
-        return err;
-      }
-
-      this.getArray(newData);
-      this.setState({text: null, input_style:"form-control", placeholder:"Add nested array"});
+      arr.push(newtoConvert);
+      this.setState({todos: arr, text: null, input_style:"form-control", placeholder:"Add nested array" });
     }
   },
 
@@ -58,10 +38,8 @@ var Excersice = React.createClass({displayName: "Excersice",
   render: function(){
       return (
         React.createElement("div", null, 
-          React.createElement("div", {className: "text-center"}, 
-          React.createElement("h1", null, "Insert nested arrays(js convention)"), 
-          React.createElement("h2", null, "i.e. [[1,2,[3]],4]")
-          ), 
+
+          React.createElement("h1", null, "Insert nested arrays (js convention)"), 
           React.createElement("div", {className: "form-inline"}, 
 
             React.createElement("div", {className: "form-group"}, 
